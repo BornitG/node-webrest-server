@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { testServer } from '../../test-server';
 import { prisma } from '../../../src/data/postgres';
-import { devNull } from 'os';
 
 
 describe('Todo route testing', () => { 
@@ -60,7 +59,7 @@ describe('Todo route testing', () => {
         const todoId = 999;
         const { body } = await request( testServer.app )
             .get(`/api/todos/${ todoId }`)
-            .expect(400);
+            .expect(404);
        
        expect( body ).toEqual({ error: `TODO with id ${ todoId } not found!`});
     });
@@ -119,7 +118,6 @@ describe('Todo route testing', () => {
 
     });
 
-    // TODO: realizar la operacion con errores personalizados
     test('should return a 404 if TODO not found api/todos/:id', async() => {
         
         const todoId = 999;
@@ -127,9 +125,9 @@ describe('Todo route testing', () => {
         const { body } = await request( testServer.app )
             .put(`/api/todos/${ todoId }`)
             .send({ text: 'Hola Mundo UPDATE', completedAt: '2024-06-06'})
-            .expect(400);
+            .expect(404);
 
-        expect(body).toEqual({ error: 'TODO with id 999 not found!' });
+        expect( body ).toEqual({ error: `TODO with id ${ todoId } not found!`});
 
     });
     
@@ -183,16 +181,15 @@ describe('Todo route testing', () => {
 
     });
 
-    // TODO: Cambiar a 404
     test('should return 404 if todo do no exist api/todos/:id', async() => {
         
         const todoId = 999;
 
         const { body } = await request( testServer.app )
             .put(`/api/todos/${ todoId }`)
-            .expect(400);
+            .expect(404);
 
-        expect(body).toEqual({ error: 'TODO with id 999 not found!' });
+        expect( body ).toEqual({ error: `TODO with id ${ todoId } not found!`});
 
     });
 
